@@ -34,10 +34,10 @@ if(FIRST_TIME)
     col_left = 1054;
     col_right = 1105;
     Target = M(row_top:row_bot,col_left:col_right);
-    FIST_TIME = 0;
+    FIRST_TIME = 0;
 end
     
-
+Target = M(row_top:row_bot,col_left:col_right);
 %the ~ on the M is to make the worms black and the backgorund white
 imshow(M) %%Binariezed image(shows worms in black)
 
