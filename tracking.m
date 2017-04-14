@@ -12,7 +12,7 @@ CENTER_ROW = 0;
 CENTER_COL = 0;
 TARGET_RANGE = 40;
 CONV_BOX_BUF = 10;
-v4_dataset = uint8(zeros(mov.Height,mov.Width,mov.Duration));
+
 
 Centers_found_X = [];
 Centers_found_Y = [];
