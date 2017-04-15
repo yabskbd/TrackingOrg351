@@ -1,29 +1,31 @@
 %% READ THE AVI
 close all
-mov=VideoReader('v4.avi');
+%%load('v4_dataset.mat');
 
 minTime = 0;
 now = 0;
 
 %%% X is Column and Y is ROW
 FIRST_TIME = 1;
-BOX_RANGE = 40;
+BOX_RANGE = 60;
 CENTER_ROW = 0;
 CENTER_COL = 0;
 TARGET_RANGE = 40;
 CONV_BOX_BUF = 10;
-v4_dataset = uint8(zeros(mov.Height,mov.Width,mov.Duration));
+gaus_windo = fspecial('gaussian',(BOX_RANGE*2)+1,30);
+gaus_windo = gaus_windo/max(max(gaus_windo));
+%gaus_windo = ones(121);
 
 Centers_found_X = [];
 Centers_found_Y = [];
-i = 1;
-while(hasFrame(mov))
+i = 20;
+frames = size(v4_dataset);
+while(i <= frames(3))
 %% Read Frame
-video = readFrame(mov);
-
+video = v4_dataset(:,:,i);
+i = i + 1
 
 %% Apply Filter(gaus)
-
 
 %% Track
 %%% Filter out background 
@@ -96,16 +98,24 @@ end
 M_Conv_with = M;
 %imshow(M_Conv_with);
 M_conv1 = conv2(M_Conv_with,Target1,'same');
-M_max1 = max(max(M_conv1(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT)));
+% figure
+% surf(M_conv1(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT));
+M_conv1 = gaus_windo.*M_conv1(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
+% figure
+% surf(M_conv1);
+M_max1 = max(max(M_conv1));
 
 M_conv2 = conv2(M_Conv_with, Target2, 'same');
-M_max2 =  max(max(M_conv2(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT)));
+M_conv2 = gaus_windo.*M_conv2(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
+M_max2 =  max(max(M_conv2));
 
 M_conv3 = conv2(M_Conv_with, Target3, 'same');
-M_max3 =  max(max(M_conv3(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT)));
+M_conv3 = gaus_windo.*M_conv3(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
+M_max3 =  max(max(M_conv3));
 
 M_conv4 = conv2(M_Conv_with, Target4, 'same');
-M_max4 =  max(max(M_conv4(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT)));
+M_conv4 = gaus_windo.*M_conv4(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
+M_max4 =  max(max(M_conv4));
 
 %Timing Stuff
 % % telapsed = toc(tstart) + toc(tstart);
@@ -133,7 +143,7 @@ end
 
 
 %Careful notice x and y are flipped
-[Max_idx_Row, Max_idx_Col] = find(M_conv_final(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT)==M_max_final);
+[Max_idx_Row, Max_idx_Col] = find(M_conv_final==M_max_final);
 %imshow(M_conv);
 % Just incase there are muliple maxes
 Max_idx_Row = Max_idx_Row(1);
@@ -148,10 +158,10 @@ shift_row_by = Max_idx_Row - BOX_RANGE;
 %imshow(M_conv_final)
 
 %Main Display
-% figure (1)
-% imshow(M);
-% hold on
-% plot(Max_idx_Col+BOX_COL_LEFT,Max_idx_Row+BOX_ROW_TOP,'r.','MarkerSize',20);
+% % figure
+% % imshow(M);
+% % hold on
+% % plot(Max_idx_Col+BOX_COL_LEFT,Max_idx_Row+BOX_ROW_TOP,'r.','MarkerSize',20);
 Centers_found_X = [Max_idx_Col+BOX_COL_LEFT,Centers_found_X];
 Centers_found_Y = [Max_idx_Row+BOX_ROW_TOP,Centers_found_Y];
 
@@ -179,8 +189,11 @@ CONV_ROW_BOTTOM = BOX_ROW_BOTTOM + CONV_BOX_BUF;
 CONV_COL_LEFT = BOX_COL_LEFT - CONV_BOX_BUF;
 CONV_COL_RIGHT = BOX_COL_RIGHT + CONV_BOX_BUF;
 
-
+close all
 end
+
+
+
 
 %%% Code for detecting Point of Interest might be useful
 % % % hold on
