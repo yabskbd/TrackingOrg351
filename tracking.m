@@ -18,9 +18,14 @@ gaus_windo = gaus_windo/max(max(gaus_windo));
 
 Centers_found_X = [];
 Centers_found_Y = [];
-i = 20;
+i = 1;
 frames = size(v4_dataset);
-while(i <= frames(3))
+while(i <= frames(3) && i <=200)
+    
+    
+%Timing Stuff
+tic;
+% tstart = tic;    
 %% Read Frame
 video = v4_dataset(:,:,i);
 i = i + 1
@@ -89,38 +94,33 @@ end
 
 %% convolution section
 
-%Timing Stuff
-% % tic;
-% % tstart = tic;
+
 
 %imshow(Target)
 %%M_Conv_with = M(CONV_ROW_TOP:CONV_ROW_BOTTOM,CONV_COL_LEFT:CONV_COL_RIGHT);
 M_Conv_with = M;
 %imshow(M_Conv_with);
-M_conv1 = conv2(M_Conv_with,Target1,'same');
+M_conv1_n = conv2(M_Conv_with,Target1,'same');
 % figure
 % surf(M_conv1(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT));
-M_conv1 = gaus_windo.*M_conv1(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
+M_conv1 = gaus_windo.*M_conv1_n(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
 % figure
 % surf(M_conv1);
 M_max1 = max(max(M_conv1));
 
-M_conv2 = conv2(M_Conv_with, Target2, 'same');
-M_conv2 = gaus_windo.*M_conv2(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
+M_conv2_n = conv2(M_Conv_with, Target2, 'same');
+M_conv2 = gaus_windo.*M_conv2_n(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
 M_max2 =  max(max(M_conv2));
 
-M_conv3 = conv2(M_Conv_with, Target3, 'same');
-M_conv3 = gaus_windo.*M_conv3(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
+M_conv3_n = conv2(M_Conv_with, Target3, 'same');
+M_conv3 = gaus_windo.*M_conv3_n(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
 M_max3 =  max(max(M_conv3));
 
-M_conv4 = conv2(M_Conv_with, Target4, 'same');
-M_conv4 = gaus_windo.*M_conv4(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
+M_conv4_n = conv2(M_Conv_with, Target4, 'same');
+M_conv4 = gaus_windo.*M_conv4_n(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
 M_max4 =  max(max(M_conv4));
 
-%Timing Stuff
-% % telapsed = toc(tstart) + toc(tstart);
-% % now = toc(tstart);
-% % maxTime = max(now,minTime);
+
 
 all_max = [M_max1,M_max2,M_max3,M_max4];
 
@@ -158,8 +158,6 @@ shift_row_by = Max_idx_Row - BOX_RANGE;
 %imshow(M_conv_final)
 
 %Main Display
-% % figure
-% % imshow(M);
 % % hold on
 % % plot(Max_idx_Col+BOX_COL_LEFT,Max_idx_Row+BOX_ROW_TOP,'r.','MarkerSize',20);
 Centers_found_X = [Max_idx_Col+BOX_COL_LEFT,Centers_found_X];
@@ -189,10 +187,19 @@ CONV_ROW_BOTTOM = BOX_ROW_BOTTOM + CONV_BOX_BUF;
 CONV_COL_LEFT = BOX_COL_LEFT - CONV_BOX_BUF;
 CONV_COL_RIGHT = BOX_COL_RIGHT + CONV_BOX_BUF;
 
+
+%Timing Stuff
+toc
+% % telapsed = toc(tstart) + toc(tstart);
+% % now = toc(tstart);
+% % maxTime = max(now,minTime);
+pause;
 close all
 end
 
-
+imshow(M)
+hold on
+plot(Centers_found_X,Centers_found_Y,'r.','MarkerSize',20)
 
 
 %%% Code for detecting Point of Interest might be useful
