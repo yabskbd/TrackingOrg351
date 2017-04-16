@@ -1,6 +1,8 @@
 %% READ THE AVI
 close all
 %load('v4_dataset.mat');
+frames = size(v4_dataset);
+frames = frames(3);
 
 minTime = 0;
 now = 0;
@@ -15,13 +17,15 @@ CONV_BOX_BUF = 10;
 gaus_windo = fspecial('gaussian',(BOX_RANGE*2)+1,30);
 gaus_windo = gaus_windo/max(max(gaus_windo));
 %gaus_windo = ones(121);
+Centers_found_X = zeros(1,frames);
+Centers_found_Y = zeros(1,frames);
+Frame_out(frames) = struct()
 
-Centers_found_X = [];
-Centers_found_Y = [];
+
 i = 1;
-frames = size(v4_dataset);
-while(i <= frames(3) && i <=200)
-     
+
+while(i <= frames)
+close all;  
 %Timing Stuff
 
 % tstart = tic;    
@@ -152,27 +156,6 @@ Max_idx_Col = Max_idx_Col(1);
 shift_col_by =  Max_idx_Col - BOX_RANGE;
 shift_row_by = Max_idx_Row - BOX_RANGE;
 
-%% Display Center dot
-%imshow(M(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT));
-%imshow(M_conv_final)
-
-%Main Display
-close all
-figure
-imshow(M);
-v_box = [BOX_COL_LEFT BOX_ROW_TOP;BOX_COL_RIGHT BOX_ROW_TOP;BOX_COL_RIGHT BOX_ROW_BOTTOM; BOX_COL_LEFT BOX_ROW_BOTTOM];
-f_box = [1 2 3 4];
-patch('Faces',f_box,'Vertices',v_box,...
-    'EdgeColor','green','FaceColor','none','LineWidth',2);
-% % hold on
-% % plot(Max_idx_Col+BOX_COL_LEFT,Max_idx_Row+BOX_ROW_TOP,'r.','MarkerSize',20);
-Centers_found_X = [Max_idx_Col+BOX_COL_LEFT,Centers_found_X];
-Centers_found_Y = [Max_idx_Row+BOX_ROW_TOP,Centers_found_Y];
-
-%plot(Max_idx_Col,Max_idx_Row,'r.','MarkerSize',20)
-%the ~ on the M is to make the worms black and the backgorund white
-%imshow(M) %%Binariezed image(shows worms in black)
-
 %box for the next iteration:
 %% ReCalculate Center of Next Box
 CENTER_ROW = CENTER_ROW + shift_row_by; 
@@ -194,11 +177,35 @@ CONV_COL_LEFT = BOX_COL_LEFT - CONV_BOX_BUF;
 CONV_COL_RIGHT = BOX_COL_RIGHT + CONV_BOX_BUF;
 
 
+%% Display Center dot
+%imshow(M(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT));
+%imshow(M_conv_final)
+
+%Main Display
+figure
+imshow(video);
+v_box = [BOX_COL_LEFT BOX_ROW_TOP;BOX_COL_RIGHT BOX_ROW_TOP;BOX_COL_RIGHT BOX_ROW_BOTTOM; BOX_COL_LEFT BOX_ROW_BOTTOM];
+f_box = [1 2 3 4];
+patch('Faces',f_box,'Vertices',v_box,...
+    'EdgeColor','green','FaceColor','none','LineWidth',2);
+hold on
+plot(Max_idx_Col+BOX_COL_LEFT,Max_idx_Row+BOX_ROW_TOP,'r.','MarkerSize',20);
+F = getframe;
+Frame_out(i).cdata = F.cdata;
+Frame_out(i).colormap = F.colormap;
+
+Centers_found_X(i) = Max_idx_Col+BOX_COL_LEFT;
+Centers_found_Y(i) = Max_idx_Row+BOX_ROW_TOP;
+
+%plot(Max_idx_Col,Max_idx_Row,'r.','MarkerSize',20)
+%the ~ on the M is to make the worms black and the backgorund white
+%imshow(M) %%Binariezed image(shows worms in black)
+
+
 %Timing Stuff
 % % telapsed = toc(tstart) + toc(tstart);
 % % now = toc(tstart);
 % % maxTime = max(now,minTime);
-pause;
 end
 
 imshow(M)
