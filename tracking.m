@@ -1,6 +1,6 @@
 %% READ THE AVI
 close all
-%%load('v4_dataset.mat');
+%load('v4_dataset.mat');
 
 minTime = 0;
 now = 0;
@@ -21,10 +21,9 @@ Centers_found_Y = [];
 i = 1;
 frames = size(v4_dataset);
 while(i <= frames(3) && i <=200)
-    
-    
+     
 %Timing Stuff
-tic;
+
 % tstart = tic;    
 %% Read Frame
 video = v4_dataset(:,:,i);
@@ -112,17 +111,17 @@ M_conv2_n = conv2(M_Conv_with, Target2, 'same');
 M_conv2 = gaus_windo.*M_conv2_n(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
 M_max2 =  max(max(M_conv2));
 
-M_conv3_n = conv2(M_Conv_with, Target3, 'same');
-M_conv3 = gaus_windo.*M_conv3_n(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
-M_max3 =  max(max(M_conv3));
+% M_conv3_n = conv2(M_Conv_with, Target3, 'same');
+% M_conv3 = gaus_windo.*M_conv3_n(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
+% M_max3 =  max(max(M_conv3));
+% 
+% M_conv4_n = conv2(M_Conv_with, Target4, 'same');
+% M_conv4 = gaus_windo.*M_conv4_n(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
+% M_max4 =  max(max(M_conv4));
 
-M_conv4_n = conv2(M_Conv_with, Target4, 'same');
-M_conv4 = gaus_windo.*M_conv4_n(BOX_ROW_TOP:BOX_ROW_BOTTOM,BOX_COL_LEFT:BOX_COL_RIGHT);
-M_max4 =  max(max(M_conv4));
 
 
-
-all_max = [M_max1,M_max2,M_max3,M_max4];
+all_max = [M_max1,M_max2];
 
 M_max_final = max(all_max);
 conv_number = find(all_max == M_max_final);
@@ -132,10 +131,10 @@ switch(conv_number(1))
         M_conv_final = M_conv1;
     case 2
         M_conv_final = M_conv2;
-    case 3
-        M_conv_final = M_conv3;
-    case 4
-        M_conv_final = M_conv4;
+%     case 3
+%         M_conv_final = M_conv3;
+%     case 4
+%         M_conv_final = M_conv4;
     otherwise
         disp('ERROR')
         
@@ -158,6 +157,13 @@ shift_row_by = Max_idx_Row - BOX_RANGE;
 %imshow(M_conv_final)
 
 %Main Display
+close all
+figure
+imshow(M);
+v_box = [BOX_COL_LEFT BOX_ROW_TOP;BOX_COL_RIGHT BOX_ROW_TOP;BOX_COL_RIGHT BOX_ROW_BOTTOM; BOX_COL_LEFT BOX_ROW_BOTTOM];
+f_box = [1 2 3 4];
+patch('Faces',f_box,'Vertices',v_box,...
+    'EdgeColor','green','FaceColor','none','LineWidth',2);
 % % hold on
 % % plot(Max_idx_Col+BOX_COL_LEFT,Max_idx_Row+BOX_ROW_TOP,'r.','MarkerSize',20);
 Centers_found_X = [Max_idx_Col+BOX_COL_LEFT,Centers_found_X];
@@ -189,12 +195,10 @@ CONV_COL_RIGHT = BOX_COL_RIGHT + CONV_BOX_BUF;
 
 
 %Timing Stuff
-toc
 % % telapsed = toc(tstart) + toc(tstart);
 % % now = toc(tstart);
 % % maxTime = max(now,minTime);
 pause;
-close all
 end
 
 imshow(M)
